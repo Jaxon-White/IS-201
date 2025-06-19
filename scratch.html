@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rock Climbing & Liar's Dice</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  body {
+    background-color: #d13a3a;
+  }
+</style>
+</head>
+<body>
+    
+  <nav>
+      <a href="index.html" style="text-decoration: none; color: black;">Home |</a>
+      <a href="education.html" style="text-decoration: none; color: black;">Education |</a>
+      <a href="experience.html" style="text-decoration: none; color: black;">Experience |</a>
+      <a href="skills.html" style="text-decoration: none; color: black;">Skills |</a>
+      <a href="contact.html" style="text-decoration: none; color: black;">Contact |</a>
+      <a href="#gameArea" style="text-decoration: none; color: black;">Jump to Game</a>
+  </nav>
+
+  <h1>Rock Climbing Gyms by State</h1>
+  <div class="tableauPlaceholder" id="viz1750360037094" style="position: relative;">
+    <noscript>
+      <a href="#">
+        <img alt="RockClimbing Gyms By State" src="https://public.tableau.com/static/images/3G/3GXY7X5Y9/1_rss.png" style="border: none" />
+      </a>
+    </noscript>
+    <object class="tableauViz" style="display: none;">
+      <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
+      <param name="embed_code_version" value="3" />
+      <param name="path" value="shared/3GXY7X5Y9" />
+      <param name="toolbar" value="yes" />
+      <param name="static_image" value="https://public.tableau.com/static/images/3G/3GXY7X5Y9/1.png" />
+      <param name="animate_transition" value="yes" />
+      <param name="display_static_image" value="yes" />
+      <param name="display_spinner" value="yes" />
+      <param name="display_overlay" value="yes" />
+      <param name="display_count" value="yes" />
+      <param name="language" value="en-US" />
+    </object>
+  </div>
+
+<h2>Why I Love Climbing</h2>
+<ol>
+  <li>Styles I enjoy:
+    <ul>
+      <li>Bouldering</li>
+      <li>Sport Climbing</li>
+    </ul>
+  </li>
+  <li>Gear I use</li>
+    <ul>
+        <li>Mammut classic craig rope</li>
+        <li>Beal Birdie</li>
+    </ul>
+  <li>Lots of my friends like to come</li>
+</ol>
+<h2 style="text-align: center;">This is my belay device</h2>
+<div style="display: flex; justify-content: center; margin-bottom: 30px;">
+  <iframe width="560" height="315" 
+    src="https://www.youtube.com/embed/gS-b7O7s3hc" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+  </iframe>
+</div>
+<h2>This is my rope</h2>
+<div>
+<h2 style="text-align: center;">Here's my climbing rope</h2>
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfBqWrw2f9gX3ogsxd72cG2I3B1sJyqRDxxQ&s" 
+       alt="Climber bouldering on a large rock" 
+       width="500" 
+       style="border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2);" />
+</div>
+  <h2>Savvy Test: Play Liar's Dice</h2>
+  <div id="gameArea">
+    <p id="instructions">Click the button to start your roll.</p>
+    <button onclick="startGame()">Roll Dice</button>
+    <div id="playerDice"></div>
+    <div id="bidSection" style="display: none;">
+      <label>Face (1-6): <input type="number" id="faceInput" min="1" max="6" /></label>
+      <label>Count: <input type="number" id="countInput" min="1" max="5" /></label>
+      <button onclick="makeBid()">Make Bid</button>
+      <button onclick="callLiar()">Call Liar!</button>
+    </div>
+    <p id="gameLog"></p>
+  </div>
+
+  <script type="text/javascript">
+    var divElement = document.getElementById('viz1750360037094');
+    var vizElement = divElement.getElementsByTagName('object')[0];
+    vizElement.style.width = '100%';
+    vizElement.style.height = (divElement.offsetWidth * 0.75) + 'px';
+    var scriptElement = document.createElement('script');
+    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+    vizElement.parentNode.insertBefore(scriptElement, vizElement);
+
+    let playerDice = [], cpuDice = [], lastBid = null;
+
+    function rollDice() {
+      return Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
+    }
+
+    function startGame() {
+      playerDice = rollDice();
+      cpuDice = rollDice();
+      lastBid = null;
+      document.getElementById('playerDice').innerText = `Your dice: ${playerDice.join(', ')}`;
+      document.getElementById('instructions').innerText = "Make your bid or call Liar.";
+      document.getElementById('gameLog').innerText = '';
+      document.getElementById('bidSection').style.display = 'block';
+    }
+
+    function makeBid() {
+      const face = parseInt(document.getElementById('faceInput').value);
+      const count = parseInt(document.getElementById('countInput').value);
+
+      if (face < 1 || face > 6 || count < 1) {
+        alert('Enter a valid face and count.');
+        return;
+      }
+
+      if (lastBid && (count < lastBid.count || (count === lastBid.count && face <= lastBid.face))) {
+        alert('Your bid must increase the count or the face.');
+        return;
+      }
+
+      lastBid = { face, count };
+      document.getElementById('gameLog').innerText = `You bid: ${count} × ${face}s\nCPU is thinking...`;
+
+      setTimeout(() => {
+        const callLiar = Math.random() < 0.4;
+        if (callLiar) {
+          checkLiar("CPU");
+        } else {
+          const newFace = Math.floor(Math.random() * 6) + 1;
+          const newCount = lastBid.count + 1;
+          lastBid = { face: newFace, count: newCount };
+          document.getElementById('gameLog').innerText += `\nCPU bids: ${newCount} × ${newFace}s`;
+          document.getElementById('instructions').innerText = "Your move: Raise or Call Liar.";
+        }
+      }, 1000);
+    }
+
+    function callLiar() {
+      if (!lastBid) {
+        alert('No bid to challenge.');
+        return;
+      }
+      checkLiar("Player");
+    }
+
+    function checkLiar(caller) {
+      const allDice = [...playerDice, ...cpuDice];
+      const count = allDice.filter(d => d === lastBid.face).length;
+
+      let resultText = `Actual count of ${lastBid.face}s: ${count}\n`;
+      if (count >= lastBid.count) {
+        resultText += `${caller} loses! The bid was valid.`;
+      } else {
+        resultText += `${caller} wins! The bid was false.`;
+      }
+
+      document.getElementById('gameLog').innerText += `\n${resultText}`;
+      document.getElementById('instructions').innerText = "Game over. Roll again to play.";
+      document.getElementById('bidSection').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
